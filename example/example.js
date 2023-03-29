@@ -30,8 +30,8 @@ class App extends React.Component {
   };
   onDrop = (e) => {
     this.setState({activeDrags: --this.state.activeDrags});
-    if (e.target.classList.contains("drop-target")) {
-      alert("Dropped!");
+    if (e.target.classList.contains('drop-target')) {
+      alert('Dropped!');
       e.target.classList.remove('hovered');
     }
   };
@@ -134,7 +134,7 @@ class App extends React.Component {
           <div className="box drop-target" onMouseEnter={this.onDropAreaMouseEnter} onMouseLeave={this.onDropAreaMouseLeave}>I can detect drops from the next box.</div>
         </Draggable>
         <Draggable {...dragHandlers} onStop={this.onDrop}>
-          <div className={`box ${this.state.activeDrags ? "no-pointer-events" : ""}`}>I can be dropped onto another box.</div>
+          <div className={`box ${this.state.activeDrags ? 'no-pointer-events' : ''}`}>I can be dropped onto another box.</div>
         </Draggable>
         <div className="box" style={{height: '500px', width: '500px', position: 'relative', overflow: 'auto', padding: '0'}}>
           <div style={{height: '1000px', width: '1000px', padding: '10px'}}>
@@ -148,6 +148,11 @@ class App extends React.Component {
               <div className="box">
                 I also can only be moved within my offsetParent.<br /><br />
                 Both parent padding and child margin work properly.
+              </div>
+            </Draggable>
+            <Draggable bounds="parent" {...dragHandlers} preventDefault={false}>
+              <div className="box">
+                I don't prevent touches from scrolling the container.
               </div>
             </Draggable>
           </div>
@@ -174,7 +179,7 @@ class App extends React.Component {
         </Draggable>
         <Draggable defaultPosition={{x: 25, y: 25}} {...dragHandlers}>
           <div className="box">
-            {"I have a default position of {x: 25, y: 25}, so I'm slightly offset."}
+            {'I have a default position of {x: 25, y: 25}, so I\'m slightly offset.'}
           </div>
         </Draggable>
         <Draggable positionOffset={{x: '-10%', y: '-10%'}} {...dragHandlers}>
@@ -223,31 +228,31 @@ class RemWrapper extends React.Component {
   // }
 
   translateTransformToRem(transform, remBaseline = 16) {
-    const convertedValues = transform.replace('translate(', '').replace(')', '')
+    const convertedValues = transform.replace('translate3d(', '').replace(')', '')
       .split(',')
       .map(px => px.replace('px', ''))
       .map(px => parseInt(px, 10) / remBaseline)
-      .map(x => `${x}rem`)
-    const [x, y] = convertedValues
+      .map(x => `${x}rem`);
+    const [x, y] = convertedValues;
 
-    return `translate(${x}, ${y})`
+    return `translate3d(${x}, ${y}, 0px)`;
   }
 
   render() {
-    const { children, remBaseline = 16, style } = this.props
-    const child = React.Children.only(children)
+    const { children, remBaseline = 16, style } = this.props;
+    const child = React.Children.only(children);
 
     const editedStyle = {
       ...child.props.style,
       ...style,
       transform: this.translateTransformToRem(style.transform, remBaseline),
-    }
+    };
 
     return React.cloneElement(child, {
        ...child.props,
        ...this.props,
        style: editedStyle
-    })
+    });
   }
 }
 

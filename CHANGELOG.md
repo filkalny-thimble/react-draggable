@@ -1,5 +1,9 @@
 # Changelog
 
+### 4.4.6 (Mar 29, 2023)
+
+- Add `preventDefault` prop to allow touch scroll
+
 ### 4.4.5 (Apr 26, 2022)
 
 - Fix: `grid` prop unused in `handleDragStop` #621
@@ -56,16 +60,16 @@
     `nodeRef` is also available on `<DraggableCore>`.
 - Remove "browser" field in "package.json":
   - There is nothing special in the browser build that is actually practical
-    for modern use. The "browser" field, as defined in 
+    for modern use. The "browser" field, as defined in
     https://github.com/defunctzombie/package-browser-field-spec#overview,
     indicates that you should use it if you are directly accessing globals,
     using browser-specific features, dom manipulation, etc.
-    
+
     React components like react-draggable are built to do minimal raw
     DOM manipulation, and to always gate this behind conditionals to ensure
     that server-side rendering still works. We don't make any changes
     to any of that for the "browser" build, so it's entirely redundant.
-    
+
     This should also fix the "Super expression must either be null or
     a function" error (#472) that some users have experienced with particular
     bundler configurations.
@@ -76,7 +80,7 @@
   - The browser build will likely be removed entirely in 5.0.
 - Fix: Make `bounds` optional in TypeScript [#473](https://github.com/strml/react-draggable/pull/473)
 
-### 4.3.1 (Apr 11, 2020) 
+### 4.3.1 (Apr 11, 2020)
 
 > This is a bugfix release.
 
@@ -87,7 +91,7 @@
     return React.cloneElement(this.props.children, {style: this.props.children.props.style});
     ```
     , `style` ends up undefined.
-- Fixed a bug that caused debug output to show up in the build. 
+- Fixed a bug that caused debug output to show up in the build.
   - `babel-loader` cache does not invalidate when it should. I had modified webpack.config.js in the last version but it reused stale cache.
 
 ### 4.3.0 (Apr 10, 2020)
@@ -97,7 +101,7 @@
   - Thanks @schnerd, [#450](https://github.com/mzabriskie/react-draggable/pull/450)
 - Fix an issue where the insides of a `<Draggable>` were not scrollable on touch devices due to the outer container having `touch-action: none`.
     - This was a long-standing hack for mobile devices. Without it, the page will scroll while you drag the element.
-    - The new solution will simply cancel the touch event `e.preventDefault()`. However, due to changes in Chrome >= 56, this is only possible on 
+    - The new solution will simply cancel the touch event `e.preventDefault()`. However, due to changes in Chrome >= 56, this is only possible on
       non-passive event handlers. To fix this, we now add/remove the touchEvent on lifecycle events rather than using React's event system.
     - [#465](https://github.com/mzabriskie/react-draggable/pull/465)
 - Upgrade devDeps and fix security warnings. None of them actually applied to this module.
@@ -121,7 +125,7 @@
   * **`"module"`**: ES6-compatible build using import/export.
 
   This should fix issues like https://github.com/STRML/react-resizable/issues/113 while allowing modern bundlers to consume esm modules in the future.
-  
+
   No compatibility changes are expected.
 
 ### 4.0.3 (Sep 10, 2019)

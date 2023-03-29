@@ -55,7 +55,7 @@ describe('react-draggable', function () {
         assert.equal(node.getAttribute('style').indexOf('touch-action: none'), -1);
       }
       assert(node.getAttribute('style').indexOf('color: black') >= 0);
-      assert(new RegExp(transformStyle + ': translate\\(0px(?:, 0px)?\\)').test(node.getAttribute('style')));
+      assert(new RegExp(transformStyle + ': translate3d\\(0px, 0px, 0px\\)').test(node.getAttribute('style')));
       assert.equal(node.getAttribute('class'), 'foo react-draggable');
     });
 
@@ -89,7 +89,7 @@ describe('react-draggable', function () {
           <div
             className="react-draggable"
             style={{
-              [transformKey]: 'translate(0px, 0px)'
+              [transformKey]: 'translate3d(0px, 0px, 0px)'
             }}
             transform={null} />
         </DraggableCore>
@@ -97,7 +97,7 @@ describe('react-draggable', function () {
 
       // Not easy to actually test equality here. The functions are bound as static props so we can't test those easily.
       const toOmit = ['onStart', 'onStop', 'onDrag', 'onMouseDown', 'children'];
-      assert.deepEqual(
+      assert.deepStrictEqual(
         _.omit(output.props, toOmit),
         _.omit(expected.props, toOmit)
       );
@@ -148,7 +148,7 @@ describe('react-draggable', function () {
         </Draggable>
       );
 
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should throw when setting className', function () {
@@ -176,7 +176,7 @@ describe('react-draggable', function () {
     });
 
     it('should throw when setting transform', function () {
-      drag = (<Draggable transform="translate(100, 100)"><span /></Draggable>);
+      drag = (<Draggable transform="translate3d(100, 100, 0)"><span /></Draggable>);
 
       TestUtils.renderIntoDocument(drag);
 
@@ -240,7 +240,7 @@ describe('react-draggable', function () {
       assert.equal(drag.state.y, 0);
     });
 
-    it('should render with style translate() for DOM nodes', function () {
+    it('should render with style translate3d() for DOM nodes', function () {
       let dragged = false;
       drag = TestUtils.renderIntoDocument(
         <Draggable onDrag={function() { dragged = true; }}>
@@ -249,14 +249,14 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const style = node.getAttribute('style');
       assert.equal(dragged, true);
-      assert(style.indexOf('transform: translate(100px, 100px);') >= 0);
+      assert(style.indexOf('transform: translate3d(100px, 100px, 0px);') >= 0);
     });
 
-    it('should render with positionOffset set as string transform and handle subsequent translate() for DOM nodes', function () {
+    it('should render with positionOffset set as string transform and handle subsequent translate3d() for DOM nodes', function () {
       let dragged = false;
       drag = TestUtils.renderIntoDocument(
         <Draggable positionOffset={{x: '10%', y: '10%'}} onDrag={function() { dragged = true; }}>
@@ -265,11 +265,11 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const style = node.getAttribute('style');
       assert.equal(dragged, true);
-      assert(style.indexOf('translate(10%, 10%) translate(100px, 100px);') >= 0);
+      assert(style.indexOf('translate3d(10%, 10%, 0px) translate3d(100px, 100px, 0px);') >= 0);
     });
 
     it('should honor "x" axis', function () {
@@ -281,11 +281,11 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const style = node.getAttribute('style');
       assert.equal(dragged, true);
-      assert(/transform: translate\(100px(?:, 0px)?\);/.test(style));
+      assert(/transform: translate3d\(100px, 0px, 0px\);/.test(style));
     });
 
     it('should honor "y" axis', function () {
@@ -297,11 +297,11 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const style = node.getAttribute('style');
       assert.equal(dragged, true);
-      assert(style.indexOf('transform: translate(0px, 100px);') >= 0);
+      assert(style.indexOf('transform: translate3d(0px, 100px, 0px);') >= 0);
     });
 
     it('should honor "none" axis', function () {
@@ -313,11 +313,11 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const style = node.getAttribute('style');
       assert.equal(dragged, true);
-      assert(/transform: translate\(0px(?:, 0px)?\);/.test(style));
+      assert(/transform: translate3d\(0px, 0px, 0px\);/.test(style));
     });
 
     it('should detect if an element is instanceof SVGElement and set state.isElementSVG to true', function() {
@@ -340,7 +340,7 @@ describe('react-draggable', function () {
       assert.equal(drag.state.isElementSVG, false);
     });
 
-    it('should render with transform translate() for SVG nodes', function () {
+    it('should render with transform translate3d() for SVG nodes', function () {
       drag = TestUtils.renderIntoDocument(
           <Draggable>
             <svg />
@@ -348,10 +348,10 @@ describe('react-draggable', function () {
       );
 
       const node = ReactDOM.findDOMNode(drag);
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
       const transform = node.getAttribute('transform');
-      assert(transform.indexOf('translate(100,100)') >= 0);
+      assert(transform.indexOf('translate3d(100,100,0)') >= 0);
     });
 
     it('should add and remove transparent selection class', function () {
@@ -461,11 +461,11 @@ describe('react-draggable', function () {
         if (!iframeDoc) return setTimeout(checkIframe, 50);
         const node = iframeDoc.querySelector('.react-draggable');
         if (!node) return setTimeout(checkIframe, 50);
-        simulateMovementFromTo(node, 0, 0, 100, 100);
+        simulateMouseFromTo(node, 0, 0, 100, 100);
 
         const style = node.getAttribute('style');
         assert.equal(dragged, true);
-        assert(style.indexOf('transform: translate(100px, 100px);') >= 0);
+        assert(style.indexOf('transform: translate3d(100px, 100px, 0px);') >= 0);
 
         renderRoot.parentNode.removeChild(renderRoot);
         done();
@@ -712,6 +712,48 @@ describe('react-draggable', function () {
         done();
       }, 50);
     });
+
+    // it('should allow touch scrolling parent', function (done) {
+    //   let dragCalled = false;
+    //   function onDrag(event, data) {
+    //     dragCalled = true;
+    //     // assert(data.x === 100);
+    //     // assert(data.y === 100);
+    //     // assert(data.deltaX === 100);
+    //     // assert(data.deltaY === 100);
+    //   }
+
+    //   const scrollParent = fragmentFromString(`
+    //     <div style="overflow: auto; width: 500px; height: 500px; outline: 1px solid black">
+    //       <div style="width: 10000px; height: 10000px;">
+    //       </div>
+    //     </div>
+    //   `);
+
+    //   drag = TestUtils.renderIntoDocument(
+    //     <Draggable onDrag={onDrag} preventDefault={false} defaultPosition={{x: 200, y: 200}} offsetParent={scrollParent}>
+    //       <div style={{position: 'relative', width: '100px', height: '100px', outline: '1px solid red'}} />
+    //     </Draggable>
+    //   );
+    //   const node = ReactDOM.findDOMNode(drag);
+
+    //   transplantNodeInto(node, scrollParent, (f) => f.children[0]);
+
+    //   const scrollParentNode = ReactDOM.findDOMNode(scrollParent);
+
+    //   simulateTouchFromTo(node, 200, 200, 100, 100);
+
+    //   setTimeout(() => {
+    //     console.log(node);
+    //     assert(dragCalled, 'onDrag was not called');
+    //     assert(scrollParentNode.scrollTop !== 0 && scrollParentNode.scrollLeft !== 0, 'parent didn\'t scroll on touch');
+    //     assert(scrollParentNode.scrollTop === 100, 'parent vertical scroll is off');
+    //     assert(scrollParentNode.scrollLeft === 100, 'parent horizontal scroll is off');
+    //     // cleanup
+    //     document.body.removeChild(scrollParent);
+    //     done();
+    //   }, 50);
+    // });
   });
 
   describe('draggable callbacks', function () {
@@ -731,7 +773,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with correct dom node with nodeRef', function (done) {
@@ -751,7 +793,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with correct dom node with nodeRef (forwardRef)', function (done) {
@@ -773,7 +815,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back on drag, with values within the defined bounds', function(done){
@@ -791,7 +833,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
 
     });
 
@@ -809,7 +851,7 @@ describe('react-draggable', function () {
         </Draggable>
       );
 
-      simulateMovementFromTo(drag, 200, 200, 300, 300);
+      simulateMouseFromTo(drag, 200, 200, 300, 300);
     });
 
     it('should call back with correct position when parent element is 2x scaled', function(done) {
@@ -829,7 +871,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with correct position when parent element is 0.5x scaled', function(done) {
@@ -849,7 +891,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should not throw an error if unmounted during a callback', function () {
@@ -876,7 +918,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(dragRef.current, 0, 0, 100, 100);
+      simulateMouseFromTo(dragRef.current, 0, 0, 100, 100);
 
       // ok, was a setstate warning thrown?
       // Assert unmounted
@@ -902,7 +944,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with correct position when parent element is 2x scaled', function(done) {
@@ -922,7 +964,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with correct position when parent element is 0.5x scaled', function(done) {
@@ -942,7 +984,7 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
 
     it('should call back with snapped data output when grid prop is provided', function(done) {
@@ -969,10 +1011,9 @@ describe('react-draggable', function () {
       );
 
       // (element, fromX, fromY, toX, toY)
-      simulateMovementFromTo(drag, 0, 0, 100, 100);
+      simulateMouseFromTo(drag, 0, 0, 100, 100);
     });
   });
-
 
   describe('validation', function () {
     it('should result with invariant when there isn\'t a child', function () {
@@ -1010,14 +1051,51 @@ function mouseMove(x, y, node) {
   return evt;
 }
 
+function createClientXY(x, y) {
+  return { clientX: x, clientY: y };
+}
 
-function simulateMovementFromTo(drag, fromX, fromY, toX, toY) {
+function touchMove(x, y, node) {
+  const touchObj = new Touch({
+    identifier: Date.now(),
+    target: node,
+    clientX: x,
+    clientY: y,
+    radiusX: 2.5,
+    radiusY: 2.5,
+    rotationAngle: 10,
+    force: 0.5,
+  });
+
+  const touchEvent = new TouchEvent('touchmove', {
+    cancelable: true,
+    bubbles: true,
+    touches: [touchObj],
+    targetTouches: [],
+    changedTouches: [touchObj],
+    shiftKey: true,
+  });
+
+  node.dispatchEvent(touchEvent);
+}
+
+
+function simulateMouseFromTo(drag, fromX, fromY, toX, toY) {
   const node = ReactDOM.findDOMNode(drag);
 
-  TestUtils.Simulate.mouseDown(node, {clientX: fromX, clientY: fromY});
+  TestUtils.Simulate.mouseDown(node, createClientXY(fromX, fromY));
   mouseMove(toX, toY, node);
   TestUtils.Simulate.mouseUp(node);
 }
+
+// // Does not work, cannot figure out how to correctly simulate touches
+// function simulateTouchFromTo(drag, fromX, fromY, toX, toY) {
+//   const node = ReactDOM.findDOMNode(drag);
+
+//   TestUtils.Simulate.touchStart(node, { touches: [createClientXY(fromX, fromY)] });
+//   touchMove(toX, toY, node);
+//   TestUtils.Simulate.touchEnd(node, { touches: [createClientXY(toX, toY)], changedTouches: [createClientXY(toX, toY)]});
+// }
 
 function fragmentFromString(strHTML) {
   var temp = document.createElement('div');
